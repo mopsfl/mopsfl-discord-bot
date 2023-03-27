@@ -1,4 +1,3 @@
-const { create } = require("domain")
 const express = require("express"),
     {
         Client,
@@ -14,7 +13,9 @@ const express = require("express"),
         Collection
     } = require("discord.js"),
     config = require("./.config.js"),
-    fs = require("fs")
+    fs = require("fs"),
+    app = express(),
+    moment = require("moment")
 
 require("dotenv").config()
 
@@ -30,19 +31,23 @@ const client = new Client({
 })
 
 client.commands = new Collection()
+
 fs.readdir("./commands", (err, files) => {
     if (err) throw err;
 
     files.forEach(f => {
-        const props = require(`./commands/${f}`)
-        client.commands.set(props.command, props)
+        try {
+            const props = require(`./commands/${f}`)
+            client.commands.set(props.command, props)
+        } catch (e) { console.error(e) }
     })
 })
 
 //UTILS
 const commandList = require("./utils/commandList"),
     commandFunctions = require("./utils/command"),
-    { createEmbed } = require("./utils/embed")
+    { createEmbed } = require("./utils/embed"),
+    misc = require("./utils/misc.js")
 
 // CLIENT READY
 client.on("ready", async() => {
@@ -59,7 +64,7 @@ client.on("ready", async() => {
         })
     }, config.activity_update_interval || 5000)
 
-    console.log(`Logged in as ${client.user.tag}!\nListening to ${servers} servers.`)
+    console.log(`Successfully logged in as ${client.user.tag}!\nListening to ${servers} servers.`)
 })
 
 // COMMAND HANDLER
@@ -99,11 +104,38 @@ client.on("messageCreate", async(message) => {
     }
 })
 
+//SERVER
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Credentials', true);
+    next()
+})
+
+app.get("/", (req, res) => res.json({ code: 200, message: "OK" }))
+app.get("/api", (req, res) => res.json({ code: 200, message: "OK" }))
+app.get("/api/client/uptime", (req, res) => res.json({ code: 200, uptime: client.uptime }))
+app.get("/api/client", (req, res) => {
+    try {
+        res.status(200).json({ code: 200, status: client.options.ws.presence.status })
+    } catch (e) {
+        console.error(e)
+        res.status(500).json({ code: 500, message: "Internal Server Error" })
+    }
+})
+app.get("/*", (req, res) => res.json({ code: 404, message: "Page Not Found" }))
+
 //SETUP
 
 try {
     client.login(process.env.TOKEN).then(() => {
+        console.info("Logging in...")
         global.client = client
+        app.listen(process.env.PORT || 3000, () => {
+            console.log("Server started")
+        })
     }).catch(console.error)
 } catch (e) {
     console.error(e)

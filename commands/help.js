@@ -1,11 +1,12 @@
 const { createEmbed } = require("../utils/embed.js")
 const { Colors } = require("discord.js")
+const commandList = require("../utils/commandList")
 
 module.exports = {
     enabled: true,
 
     category: "BOT",
-    command: "ping",
+    command: "help",
 
     arguments: "",
 
@@ -17,14 +18,11 @@ module.exports = {
             message = command.message
 
         let embed = createEmbed({
-            description: "Pinging... Please wait!",
-            color: Colors.Yellow,
+            title: "Help",
+            color: Colors.Green,
+            fields: commandList.create(),
+            timestamp: true
         })
-        message.reply({ embeds: [embed] }).then(msg => {
-            const ping = msg.createdTimestamp - message.createdTimestamp
-            msg.edit({
-                embeds: [createEmbed({ description: "Received a ping of: `" + `${ping+"ms"}` + "`", color: Colors.Green })]
-            })
-        })
+        message.reply({ embeds: [embed] })
     }
 }
