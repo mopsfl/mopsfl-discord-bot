@@ -1,3 +1,4 @@
+const { create } = require("domain")
 const express = require("express"),
     {
         Client,
@@ -12,12 +13,10 @@ const express = require("express"),
         EmbedBuilder,
         Collection
     } = require("discord.js"),
-    secrets = require("dotenv").config(),
     config = require("./.config.js"),
-    { MongoClient } = require("mongodb"),
     fs = require("fs")
 
-const URI = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@mopsfldiscordbot.pdtp3ig.mongodb.net/?retryWrites=true&w=majority`
+require("dotenv").config()
 
 const client = new Client({
     intents: [
@@ -42,7 +41,8 @@ fs.readdir("./commands", (err, files) => {
 
 //UTILS
 const commandList = require("./utils/commandList"),
-    commandFunctions = require("./utils/command")
+    commandFunctions = require("./utils/command"),
+    { createEmbed } = require("./utils/embed")
 
 // CLIENT READY
 client.on("ready", async() => {
@@ -71,10 +71,28 @@ client.on("messageCreate", async(message) => {
             const command = {
                 cmd: commandFunctions.getCommand(message),
                 args: commandFunctions.getArgs(message),
-                props: commandFunctions.getProps(message)
+                props: commandFunctions.getProps(message),
+                message: message,
             }
-            if (message.guild == null && !command.props.allow_dm) return
-            console.log(command)
+            if (message.guild == null && !command.props.allow_dm || !command.props.enabled) return
+            let arg_length = command.props.arguments != "" ? 0 : command.props.arguments.length
+            if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && !command.props.ignore_arguments) {
+                let usage_args = command.props.arguments.length > 0 ? "`" + `${command.props.arguments}` + "`" : ""
+                let usage_cmd = "`" + `${config.prefix}${command.cmd}` + "`"
+                let embed = createEmbed({
+                    title: "Syntax Error",
+                    color: Colors.Red,
+                    fields: [
+                        { name: "Usage:", value: `${usage_cmd} ${usage_args}` }
+                    ],
+                    timestamp: true
+                })
+                message.reply({ embeds: [embed] })
+                return
+            }
+            command.props.callback(command).then(() => {
+                console.log(`'${command.cmd}' command requested by ${message.author.tag}`)
+            })
         }
     } catch (e) {
         console.error(e)

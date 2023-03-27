@@ -1,10 +1,5 @@
-const fs = require("fs")
+const embed = require("./utils/embed")
+const commandList = require("./utils/commandList")
 
-fs.readdir("./commands", (err, files) => {
-    if (err) throw err;
-
-    files.forEach(f => {
-        const props = require(`./commands/${f}`)
-        console.log(props)
-    })
-})
+let cmdlist = commandList.create()
+let newembed = embed.createEmbed("title", "desc", undefined, true, { author: { name: "author" }, footer: { text: "footer" }, fields: cmdlist })
