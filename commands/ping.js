@@ -20,9 +20,9 @@ module.exports = {
             description: "Pinging... Please wait!",
             color: Colors.Yellow,
         })
-        message.reply({ embeds: [embed] }).then(msg => {
+        await message.reply({ embeds: [embed] }).then(async(msg) => {
             const ping = msg.createdTimestamp - message.createdTimestamp
-            msg.edit({
+            await msg.edit({
                 embeds: [createEmbed({ description: "Received a ping of: `" + `${ping+"ms"}` + "`", color: Colors.Green })]
             })
         })

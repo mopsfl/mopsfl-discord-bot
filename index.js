@@ -24,13 +24,15 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.DirectMessages
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildModeration,
     ],
     partials: [Partials.Channel],
     fetchAllMembers: false
 })
 
 client.commands = new Collection()
+client.command_logs = new Collection()
 
 fs.readdir("./commands", (err, files) => {
     if (err) throw err;
@@ -63,7 +65,6 @@ client.on("ready", async() => {
             status: `${config.activities[i]}`
         })
     }, config.activity_update_interval || 5000)
-
     console.log(`Successfully logged in as ${client.user.tag}!\nListening to ${servers} servers.`)
 })
 
@@ -76,6 +77,7 @@ client.on("messageCreate", async(message) => {
             const command = {
                 cmd: commandFunctions.getCommand(message),
                 args: commandFunctions.getArgs(message),
+                rawargs: commandFunctions.getRawArgs(message),
                 props: commandFunctions.getProps(message),
                 message: message,
             }
@@ -96,6 +98,7 @@ client.on("messageCreate", async(message) => {
                 return
             }
             command.props.callback(command).then(() => {
+                client.command_logs.set(command.cmd, command)
                 console.log(`'${command.cmd}' command requested by ${message.author.tag}`)
             })
         }
@@ -117,6 +120,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => res.json({ code: 200, message: "OK" }))
 app.get("/api", (req, res) => res.json({ code: 200, message: "OK" }))
 app.get("/api/client/uptime", (req, res) => res.json({ code: 200, uptime: client.uptime }))
+app.get("/api/client/commandlogs", (req, res) => res.json(client.command_logs))
 app.get("/api/client", (req, res) => {
     try {
         res.status(200).json({ code: 200, status: client.options.ws.presence.status })

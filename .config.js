@@ -8,9 +8,16 @@ module.exports = {
         `${prefix}help`
     ],
     command_list: { // Commands list for the help command
+        "MOPSHUB": [
+            "script"
+        ],
+        "STAFF": [
+            "kick",
+            "ban"
+        ],
         "BOT": [
             "help",
             "ping",
         ],
-    }
+    },
 }
