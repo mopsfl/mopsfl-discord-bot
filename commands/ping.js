@@ -25,7 +25,7 @@ module.exports = {
         message.reply({ embeds: [embed] }).then(msg => {
             const ping = msg.createdTimestamp - message.createdTimestamp
             msg.edit({
-                embeds: [createEmbed({ description: "Received a ping of: `" + `${ping+"ms"}` + "`", color: Colors.Green, timestamp: true })]
+                embeds: [createEmbed({ description: "Received a ping of: `" + `${ping+"ms"}` + "`", color: Colors.Green })]
             })
         })
     }
