@@ -12,9 +12,11 @@ module.exports = {
     allow_dm: true,
     ignore_arguments: true, //wont throw any syntax error even if the arguments are wrong
 
-    callback: async function(command) {
+    callback: async function(arg) {
         const client = global.client,
-            message = command.message
+            message = arg.message || arg
+
+        if (!message) return
 
         let embed = createEmbed({
             description: "Pinging... Please wait!",

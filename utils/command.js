@@ -44,4 +44,12 @@ module.exports = {
         if (!message) return
         return global.client.commands.find(c => c.command == this.getCommand(message))
     },
+    /**
+     * @description Checks if the message mentioned the bot
+     * @param {String} message
+     */
+    isBotMention: function(message) {
+        if (!message) return
+        return message.mentions.users.find(id => id == global.client.user.id)
+    }
 }

@@ -83,7 +83,6 @@ client.on("messageCreate", async(message) => {
             }
             if (message.guild == null && !command.props.allow_dm || !command.props.enabled) return
             let arg_length = command.props.arguments.length == 0 ? 0 : command.props.min_args || 0
-            console.log(arg_length)
             if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && !command.props.ignore_arguments) {
                 let usage_args = command.props.arguments.length > 0 ? "`" + `${command.props.arguments}` + "`" : ""
                 let usage_cmd = "`" + `${config.prefix}${command.cmd}` + "`"
@@ -102,6 +101,9 @@ client.on("messageCreate", async(message) => {
                 client.command_logs.set(command.cmd, command)
                 console.log(`'${command.cmd}' command requested by ${message.author.tag}`)
             })
+        } else if (commandFunctions.isBotMention(message)) {
+            const helpCommand = client.commands.find(cmd => cmd.command == "help")
+            if (helpCommand) helpCommand.callback(message)
         }
     } catch (e) {
         console.error(e)
@@ -111,18 +113,29 @@ client.on("messageCreate", async(message) => {
 //SERVER
 
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.header('Access-Control-Allow-Credentials', true);
     next()
 })
 
+
+app.get("/api/*", (req, res, next) => {
+    try {
+        if (!req.query.auth || req.query.auth != process.env.APIKEY) return res.status(401).json({ code: 401, message: "No Authorization" })
+    } catch (e) {
+        res.status(500).json({ code: 500, message: "Internal Server Error" });
+        console.error(e)
+    }
+    next();
+})
 app.get("/", (req, res) => res.json({ code: 200, message: "OK" }))
 app.get("/api", (req, res) => res.json({ code: 200, message: "OK" }))
+app.get("/api/client", (req, res) => res.status(200).json({ code: 200, status: client.options.ws.presence.status }))
 app.get("/api/client/uptime", (req, res) => res.json({ code: 200, uptime: client.uptime }))
 app.get("/api/client/commandlogs", (req, res) => res.json(client.command_logs))
-app.get("/api/client", (req, res) => {
+app.get("/api/client/info", (req, res) => res.status(200).json(client))
+app.get("/api/test", (req, res) => {
     try {
         res.status(200).json({ code: 200, status: client.options.ws.presence.status })
     } catch (e) {
