@@ -1,4 +1,5 @@
 const { prefix } = require("../.config.js")
+const { PermissionsBitField, User, Collection } = require("discord.js")
 
 module.exports = {
     /**
@@ -51,5 +52,27 @@ module.exports = {
     isBotMention: function(message) {
         if (!message) return
         return message.mentions.users.find(id => id == global.client.user.id)
+    },
+    parseMentions: function(message) {
+        if (!message) return
+        const mentions = message.mentions.users
+        if (!mentions) return
+        let users = []
+
+        mentions.forEach(async(id) => {
+            await global.client.users.fetch(id).then(user => {
+                users[id] = user
+            }).catch(console.error)
+        })
+        return users
+    },
+    /**
+     * @description Checks if the user has the specified permission(s)
+     * @param {User} user 
+     * @param {PermissionsBitField | [ PermissionsBitField ] } permission_bit 
+     */
+    hasPermission: function(user, permission_bit) {
+        if (!user || !permission_bit) return
+
     }
 }

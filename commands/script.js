@@ -1,5 +1,5 @@
 const { createEmbed } = require("../utils/embed.js")
-const { Colors } = require("discord.js")
+const { Colors, PermissionsBitField } = require("discord.js")
 
 module.exports = {
     enabled: true,

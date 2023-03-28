@@ -49,7 +49,7 @@ fs.readdir("./commands", (err, files) => {
 const commandList = require("./utils/commandList"),
     commandFunctions = require("./utils/command"),
     { createEmbed } = require("./utils/embed"),
-    misc = require("./utils/misc.js")
+    { getEmoji } = require("./utils/misc.js")
 
 // CLIENT READY
 client.on("ready", async() => {
@@ -82,6 +82,14 @@ client.on("messageCreate", async(message) => {
                 message: message,
             }
             if (message.guild == null && !command.props.allow_dm || !command.props.enabled) return
+            if (config.ignored_guilds.includes(message.guild.id)) {
+                let error_embed = createEmbed({
+                    description: `${getEmoji("delete")} Commands are currently disabled in this guild.`,
+                    color: Colors.Red,
+                })
+                message.reply({ embeds: [error_embed] })
+                return
+            }
             let arg_length = command.props.arguments.length == 0 ? 0 : command.props.min_args || 0
             if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && !command.props.ignore_arguments) {
                 let usage_args = command.props.arguments.length > 0 ? "`" + `${command.props.arguments}` + "`" : ""
@@ -135,6 +143,7 @@ app.get("/api/client", (req, res) => res.status(200).json({ code: 200, status: c
 app.get("/api/client/uptime", (req, res) => res.json({ code: 200, uptime: client.uptime }))
 app.get("/api/client/commandlogs", (req, res) => res.json(client.command_logs))
 app.get("/api/client/info", (req, res) => res.status(200).json(client))
+app.get("/api/global/test", (req, res) => res.status(200).json(global.test))
 app.get("/api/test", (req, res) => {
     try {
         res.status(200).json({ code: 200, status: client.options.ws.presence.status })

@@ -21,4 +21,7 @@ module.exports = {
             "ping",
         ],
     },
+    ignored_guilds: [
+        "1039096335326007336",
+    ]
 }
