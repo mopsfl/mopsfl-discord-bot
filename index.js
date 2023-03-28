@@ -82,7 +82,8 @@ client.on("messageCreate", async(message) => {
                 message: message,
             }
             if (message.guild == null && !command.props.allow_dm || !command.props.enabled) return
-            let arg_length = command.props.arguments != "" ? 0 : command.props.arguments.length
+            let arg_length = command.props.arguments.length == 0 ? 0 : command.props.min_args || 0
+            console.log(arg_length)
             if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && !command.props.ignore_arguments) {
                 let usage_args = command.props.arguments.length > 0 ? "`" + `${command.props.arguments}` + "`" : ""
                 let usage_cmd = "`" + `${config.prefix}${command.cmd}` + "`"

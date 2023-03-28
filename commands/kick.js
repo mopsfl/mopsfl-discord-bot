@@ -8,6 +8,7 @@ module.exports = {
     command: "kick",
 
     arguments: "<user>",
+    min_args: 1,
 
     allow_dm: false,
     ignore_arguments: false, //wont throw any syntax error even if the arguments are wrong
