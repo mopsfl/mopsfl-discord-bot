@@ -1,10 +1,10 @@
 const { prefix } = require("../.config.js")
-const { PermissionsBitField, User, Collection } = require("discord.js")
+const { PermissionsBitField, User, Collection, Message } = require("discord.js")
 
 module.exports = {
     /**
      * @description Gets the command that's being used in the message
-     * @param {String} message
+     * @param { Message } message
      */
     getCommand: function(message) {
         if (!message) return
@@ -12,7 +12,7 @@ module.exports = {
     },
     /**
      * @description Gets the args that are being used in the message
-     * @param {String} message
+     * @param { Message } message
      */
     getArgs: function(message) {
         if (!message || !message.content) return
@@ -20,8 +20,8 @@ module.exports = {
     },
     /**
      * @description Gets the raw args that are being used in the message as a string
-     * @param {String} message
-     * @param {String} command
+     * @param { Message } message
+     * @param { String } command
      */
     getRawArgs: function(message) {
         if (!message) return
@@ -29,7 +29,7 @@ module.exports = {
     },
     /**
      * @description Checks if the message is a command (starts with the bot prefix)
-     * @param {String} message
+     * @param { Message } message
      */
     isCommand: function(message) {
         if (!message) return
@@ -39,7 +39,7 @@ module.exports = {
     },
     /**
      * @description Gets the properties of a command from the command collection
-     * @param {String} message
+     * @param { Message } message
      */
     getProps: function(message) {
         if (!message) return
@@ -47,12 +47,16 @@ module.exports = {
     },
     /**
      * @description Checks if the message mentioned the bot
-     * @param {String} message
+     * @param { String } message
      */
     isBotMention: function(message) {
         if (!message) return
         return message.mentions.users.find(id => id == global.client.user.id)
     },
+    /**
+     * @description Parses all the mentions from a message
+     * @param { Message } message
+     */
     parseMentions: function(message) {
         if (!message) return
         const mentions = message.mentions.users
@@ -68,8 +72,8 @@ module.exports = {
     },
     /**
      * @description Checks if the user has the specified permission(s)
-     * @param {User} user 
-     * @param {PermissionsBitField | [ PermissionsBitField ] } permission_bit 
+     * @param { User } user 
+     * @param { PermissionsBitField | [ PermissionsBitField ] } permission_bit 
      */
     hasPermission: function(user, permission_bit) {
         if (!user || !permission_bit) return
