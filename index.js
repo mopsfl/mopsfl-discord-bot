@@ -95,7 +95,7 @@ client.on("messageCreate", async(message) => {
                 let usage_args = command.props.arguments.length > 0 ? "`" + `${command.props.arguments}` + "`" : ""
                 let usage_cmd = "`" + `${config.prefix}${command.cmd}` + "`"
                 let embed = createEmbed({
-                    title: "Syntax Error",
+                    title: `${getEmoji("failed")} Syntax Error`,
                     color: Colors.Red,
                     fields: [
                         { name: "Usage:", value: `${usage_cmd} ${usage_args}` }

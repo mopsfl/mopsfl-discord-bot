@@ -27,14 +27,14 @@ module.exports = {
 
                 } else {
                     let error_embed = createEmbed({
-                        description: `${getEmoji("delete")} You can't kick bots with this command!`,
+                        description: `${getEmoji("failed")} You can't kick bots with this command!`,
                         color: Colors.Red,
                     })
                     message.reply({ embeds: [error_embed] })
                 }
             } else {
                 let error_embed = createEmbed({
-                    description: `${getEmoji("delete")} You can't kick yourself from this server!`,
+                    description: `${getEmoji("failed")} You can't kick yourself from this server!`,
                     color: Colors.Red,
                 })
                 message.reply({ embeds: [error_embed] })
@@ -42,7 +42,7 @@ module.exports = {
         } else {
             let invalid_user = isNaN(arg.args[1].replace("<@", "").replace(">", "")) ? "`" + arg.args[1] + "`" : `${arg.args[1] }`
             let error_embed = createEmbed({
-                description: `${getEmoji("delete")} Unable to find ${invalid_user} in this server.`,
+                description: `${getEmoji("error")} Unable to find ${invalid_user} in this server.`,
                 color: Colors.Red,
             })
             message.reply({ embeds: [error_embed] })

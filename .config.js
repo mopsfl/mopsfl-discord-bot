@@ -9,9 +9,6 @@ module.exports = {
         `${prefix}script`,
     ],
     command_list: { // Commands list for the help command
-        "MOPSHUB": [
-            "script"
-        ],
         "STAFF": [
             "kick",
             "ban"
@@ -22,6 +19,6 @@ module.exports = {
         ],
     },
     ignored_guilds: [
-        "1039096335326007336",
+        "",
     ]
 }
