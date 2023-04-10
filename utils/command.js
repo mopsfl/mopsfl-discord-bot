@@ -1,5 +1,8 @@
 const { prefix } = require("../.config.js")
-const { PermissionsBitField, User, Collection, Message } = require("discord.js")
+const { createEmbed } = require("../utils/embed")
+const { getEmoji } = require("../utils/misc")
+
+const { PermissionsBitField, User, Collection, Message, Colors } = require("discord.js")
 
 module.exports = {
     /**
@@ -77,6 +80,25 @@ module.exports = {
      */
     hasPermission: function(user, permission_bit) {
         if (!user || !permission_bit) return
-
+        return user.permissions.has(permission_bit) || user.permissions.has(PermissionsBitField.Flags.Administrator)
+    },
+    /**
+     * @description Sents a error message
+     * @param { Error } error
+     * @param { Message } message
+     */
+    sendErrorMessage: function(error, message) {
+        if (!message) return
+        let error_message = "```" + `${error.message}` + "```"
+        let error_name = "```" + `${error.name}` + "```"
+        let error_embed = createEmbed({
+            title: `${getEmoji("error")} Internal Error - ${error_name}`,
+            color: Colors.Red,
+            fields: [
+                { name: "Error:", value: `${error_message}` },
+            ],
+            timestamp: true,
+        })
+        return message.reply({ embeds: [error_embed] })
     }
 }
