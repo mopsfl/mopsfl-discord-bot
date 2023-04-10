@@ -72,6 +72,7 @@ client.on("ready", async() => {
 
 client.on("messageCreate", async(message) => {
     if (message.author.bot) return
+    if (!message.content) return
     try {
         if (commandFunctions.isCommand(message)) {
             const command = {
@@ -89,6 +90,23 @@ client.on("messageCreate", async(message) => {
                 })
                 message.reply({ embeds: [error_embed] })
                 return
+            }
+            if (command.props.required_permissions) {
+                let allowed = false
+                for (let i = 0; i < command.props.required_permissions.length; i++) {
+                    const permission_bit = command.props.required_permissions[i];
+                    if (commandFunctions.hasPermission(message.member, permission_bit)) allowed = true
+                }
+                if (!allowed) {
+                    let embed = createEmbed({
+                        title: `${getEmoji("failed")} Missing Permissions`,
+                        color: Colors.Red,
+                        description: "You are not allowed to use this command.",
+                        timestamp: true
+                    })
+                    message.reply({ embeds: [embed] })
+                    return
+                }
             }
             let arg_length = command.props.arguments.length == 0 ? 0 : command.props.min_args || 0
             if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && !command.props.ignore_arguments) {
