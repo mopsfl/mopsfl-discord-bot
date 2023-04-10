@@ -6,7 +6,6 @@ module.exports = {
     dm_commands: true, // If dm commands should be allowed 
     activities: [ // Bot activities
         `${prefix}help`,
-        `${prefix}script`,
     ],
     command_list: { // Commands list for the help command
         "STAFF": [
