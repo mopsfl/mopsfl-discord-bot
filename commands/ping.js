@@ -24,7 +24,7 @@ module.exports = {
         })
         await message.reply({ embeds: [embed] }).then(async(msg) => {
             const ping = msg.createdTimestamp - message.createdTimestamp
-            await msg.edit({
+            return await msg.edit({
                 embeds: [createEmbed({ description: "Received a ping of: `" + `${ping+"ms"}` + "`", color: Colors.Green })]
             })
         })

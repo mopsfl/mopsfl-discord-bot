@@ -25,6 +25,6 @@ module.exports = {
             fields: commandList.create(),
             timestamp: true
         })
-        message.reply({ embeds: [embed] })
+        return await message.reply({ embeds: [embed] })
     }
 }
