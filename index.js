@@ -109,7 +109,7 @@ client.on("messageCreate", async(message) => {
                 }
             }
             let arg_length = command.props.arguments.length == 0 ? 0 : command.props.min_args || 0
-            if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && !command.props.ignore_arguments) {
+            if (((command.args.length - 1) > arg_length || (command.args.length - 1) < arg_length) && (command.args.length - 1 < command.props.max_args) && !command.props.ignore_arguments) {
                 let usage_args = command.props.arguments.length > 0 ? "`" + `${command.props.arguments}` + "`" : ""
                 let usage_cmd = "`" + `${config.prefix}${command.cmd}` + "`"
                 let embed = createEmbed({
@@ -124,7 +124,6 @@ client.on("messageCreate", async(message) => {
                 return
             }
             command.props.callback(command).then(() => {
-                client.command_logs.set(command.cmd, command)
                 console.log(`'${command.cmd}' command requested by ${message.author.tag}`)
             })
         } else if (commandFunctions.isBotMention(message)) {
@@ -159,7 +158,6 @@ app.get("/", (req, res) => res.json({ code: 200, message: "OK" }))
 app.get("/api", (req, res) => res.json({ code: 200, message: "OK" }))
 app.get("/api/client", (req, res) => res.status(200).json({ code: 200, status: client.options.ws.presence.status }))
 app.get("/api/client/uptime", (req, res) => res.json({ code: 200, uptime: client.uptime }))
-app.get("/api/client/commandlogs", (req, res) => res.json(client.command_logs))
 app.get("/api/client/info", (req, res) => res.status(200).json(client))
 app.get("/api/global/test", (req, res) => res.status(200).json(global.test))
 app.get("/api/test", (req, res) => {
