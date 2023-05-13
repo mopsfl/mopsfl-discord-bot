@@ -144,7 +144,6 @@ app.use((req, res, next) => {
     next()
 })
 
-
 app.get("/api/*", (req, res, next) => {
     try {
         if (!req.query.auth || req.query.auth != process.env.APIKEY) return res.status(401).json({ code: 401, message: "No Authorization" })
