@@ -7,7 +7,7 @@
     "express-rate-limit": "^6.7.0",
     "fs": "^0.0.1-security",
     "moment": "^2.29.4",
-    "mongodb": "5.1",
+    "mongodb": "5.8.0",
     "pretty-ms": "^8.0.0"
   }
 }
